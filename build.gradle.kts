@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+
 	implementation("software.amazon.awssdk:url-connection-client:2.20.0")
 	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("software.amazon.awssdk:s3:2.20.0")

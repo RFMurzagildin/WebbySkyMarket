@@ -1,24 +1,21 @@
 package com.example.webbyskymarket.controller;
 
+import com.example.webbyskymarket.dto.ProfileCommentDTO;
+import com.example.webbyskymarket.enams.ProductStatus;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.service.ProductService;
+import com.example.webbyskymarket.service.ProfileCommentService;
 import com.example.webbyskymarket.service.StorageService;
 import com.example.webbyskymarket.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.webbyskymarket.enams.ProductStatus;
-import com.example.webbyskymarket.service.ProfileCommentService;
-import com.example.webbyskymarket.models.ProfileComment;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.validation.BindingResult;
-import jakarta.validation.Valid;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +41,7 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("profileComments", profileCommentService.getCommentsForUser(user));
-        model.addAttribute("newProfileComment", new ProfileCommentForm());
+        model.addAttribute("newProfileComment", new ProfileCommentDTO());
         return "user/profile";
     }
 
@@ -58,7 +55,7 @@ public class UserController {
         model.addAttribute("user", currentUser);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("profileComments", profileCommentService.getCommentsForUser(currentUser));
-        model.addAttribute("newProfileComment", new ProfileCommentForm());
+        model.addAttribute("newProfileComment", new ProfileCommentDTO());
         return "user/profile";
     }
 
@@ -92,7 +89,7 @@ public class UserController {
 
     @PostMapping("/profile/{id}/comment")
     public String addProfileComment(@PathVariable Long id,
-                                    @Valid @ModelAttribute("newProfileComment") ProfileCommentForm form,
+                                    @Valid @ModelAttribute("newProfileComment") ProfileCommentDTO form,
                                     BindingResult bindingResult,
                                     Authentication authentication) {
         User author = userService.findByUsername(authentication.getName());
@@ -102,15 +99,5 @@ public class UserController {
         }
         profileCommentService.addComment(author, profileOwner, form.getText(), form.getRating());
         return "redirect:/users/profile/" + id;
-    }
-
-    @Getter
-    @Setter
-    public static class ProfileCommentForm {
-        @jakarta.validation.constraints.NotBlank
-        private String text;
-        @jakarta.validation.constraints.Min(1)
-        @jakarta.validation.constraints.Max(5)
-        private int rating;
     }
 }

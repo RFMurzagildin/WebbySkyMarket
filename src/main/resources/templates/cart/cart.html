@@ -42,7 +42,8 @@
                             <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="text-decoration-none text-dark">
                                 <h5 class="card-title" th:text="${product.name}"></h5>
                                 <p class="card-text text-muted" th:text="${product.description}"></p>
-                                <p class="card-text text-success fw-bold" th:text="'$' + ${product.price}"></p>
+                                <p class="card-text text-success fw-bold" th:if="${currency == 'USD'}" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|"></p>
+                                <p class="card-text text-success fw-bold" th:if="${currency == 'RUB'}" th:text="|${#numbers.formatDecimal(product.price * usdToRub, 1, 2)} ₽|"></p>
                             </a>
                         </div>
                         
@@ -61,7 +62,8 @@
                     <h5 class="card-title">Order Summary</h5>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Subtotal</span>
-                        <span th:text="'$' + ${#aggregates.sum(cart.products.![price])}"></span>
+                        <span th:if="${currency == 'USD'}" th:text="|$${#numbers.formatDecimal(#aggregates.sum(cart.products.![price]), 1, 2)}|"></span>
+                        <span th:if="${currency == 'RUB'}" th:text="|${#numbers.formatDecimal(#aggregates.sum(cart.products.![price]) * usdToRub, 1, 2)} ₽|"></span>
                     </div>
                     <button class="btn btn-outline-danger w-100" id="clearCart">Clear Cart</button>
                 </div>

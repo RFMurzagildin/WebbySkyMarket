@@ -9,6 +9,7 @@ import com.example.webbyskymarket.models.Cart;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.service.CartService;
+import com.example.webbyskymarket.service.CurrencyService;
 import com.example.webbyskymarket.service.ProductService;
 import com.example.webbyskymarket.service.ReviewService;
 import com.example.webbyskymarket.service.StorageService;
@@ -36,15 +37,19 @@ public class ProductController {
     private final StorageService storageService;
     private final CartService cartService;
     private final ReviewService reviewService;
+    private final CurrencyService currencyService;
 
     @GetMapping
-    public String catalogPage(@CurrentSecurityContext(expression="authentication?.name") String username, Model model){
+    public String catalogPage(@CurrentSecurityContext(expression="authentication?.name") String username, Model model,
+                             @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
         List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "user/catalog";
     }
 
@@ -103,7 +108,8 @@ public class ProductController {
             @PathVariable Long id, 
             Model model, 
             @CurrentSecurityContext(expression="authentication?.name") String username,
-            Authentication authentication
+            Authentication authentication,
+            @CookieValue(value = "currency", defaultValue = "USD") String currency
     ) {
         Product product = productService.getProductById(id);
         if (product.getStatus() != ProductStatus.ACTIVE) {
@@ -116,6 +122,8 @@ public class ProductController {
             Cart cart = cartService.getOrCreateCart(user);
             model.addAttribute("cart", cart);
         }
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         model.addAttribute("reviews", reviewService.getProductReviews(id));
         model.addAttribute("reviewDTO", new ReviewDTO());
         return "product/product-card";

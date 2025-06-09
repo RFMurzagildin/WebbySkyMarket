@@ -19,7 +19,7 @@ public class ProfileComment {
     private String text;
 
     @Column(nullable = false)
-    private int rating; // 1-5
+    private int rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)

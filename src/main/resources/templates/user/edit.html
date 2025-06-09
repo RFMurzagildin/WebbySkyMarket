@@ -144,7 +144,7 @@
         }
 
         const formData = new FormData();
-        formData.append('avatar', file);
+        formData.append('image', file);
 
         fetch('users/profile/upload-image', {
             method: 'POST',

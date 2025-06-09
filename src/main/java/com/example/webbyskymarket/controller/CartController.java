@@ -4,6 +4,7 @@ import com.example.webbyskymarket.models.Cart;
 import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.service.CartService;
 import com.example.webbyskymarket.service.UserService;
+import com.example.webbyskymarket.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
@@ -19,15 +20,19 @@ import java.util.Map;
 public class CartController {
     private final CartService cartService;
     private final UserService userService;
+    private final CurrencyService currencyService;
 
     @GetMapping
-    public String viewCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model) {
+    public String viewCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model,
+                          @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
         cart.setProducts(cart.getProducts().stream()
             .filter(product -> product.getStatus() == com.example.webbyskymarket.enams.ProductStatus.ACTIVE)
             .toList());
         model.addAttribute("cart", cart);
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "cart/cart";
     }
 
