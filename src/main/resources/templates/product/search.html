@@ -43,10 +43,10 @@
     <div class="row">
         <div th:each="product : ${products}" class="col-md-4 mb-4">
             <div class="card h-100 position-relative">
-                <button class="btn btn-link position-absolute top-0 end-0 p-2 cart-heart"
+                <button class="btn btn-link position-absolute top-0 end-0 p-2 cart-button"
                         th:data-product-id="${product.id}"
-                        th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-danger' : 'text-muted'">
-                    <i class="bi bi-heart-fill fs-4"></i>
+                        th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'">
+                    <i class="bi bi-cart-plus-fill fs-4"></i>
                 </button>
                 <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="card-link">
                     <img th:if="${product.imagePath1 != null}"
@@ -70,11 +70,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.cart-heart').forEach(button => {
+    document.querySelectorAll('.cart-button').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const productId = this.dataset.productId;
-            const isInCart = this.classList.contains('text-danger');
+            const isInCart = this.classList.contains('text-success');
             
             fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
                 method: 'POST',
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }).then(response => {
                 if (response.ok) {
-                    this.classList.toggle('text-danger');
+                    this.classList.toggle('text-success');
                     this.classList.toggle('text-muted');
                 }
             });

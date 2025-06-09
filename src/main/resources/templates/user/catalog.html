@@ -202,11 +202,11 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="product-price" th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
                                     <button type="button" 
-                                            class="cart-heart" 
-                                            th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-danger' : 'text-muted'"
+                                            class="cart-button" 
+                                            th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'"
                                             th:data-product-id="${product.id}"
                                             onclick="event.preventDefault(); event.stopPropagation();">
-                                        <i class="bi bi-heart-fill"></i>
+                                        <i class="bi bi-cart-plus-fill"></i>
                                     </button>
                                 </div>
                             </div>
@@ -223,34 +223,22 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const heartButtons = document.querySelectorAll('.cart-heart');
-    
-    heartButtons.forEach(button => {
+    document.querySelectorAll('.cart-button').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-            
             const productId = this.dataset.productId;
-            const isInCart = this.classList.contains('text-danger');
+            const isInCart = this.classList.contains('text-success');
             
             fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.classList.toggle('text-danger');
+            }).then(response => {
+                if (response.ok) {
+                    this.classList.toggle('text-success');
                     this.classList.toggle('text-muted');
                 }
-                // Optional: show a message to the user
-                // alert(data.message);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating the cart');
             });
         });
     });
