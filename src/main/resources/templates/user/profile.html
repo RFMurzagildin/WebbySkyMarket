@@ -79,7 +79,7 @@
                     </div>
 
 
-                    <div th:if="${user.role.name() == 'ADMIN'}" class="mt-2">
+                    <div th:if="${user.role.name() == 'ADMIN' and user.id == currentUser.id}" class="mt-2">
                         <a href="/admin" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16">
                                 <path d="M5.338 1.022a.5.5 0 0 0-.676.094l-1.5 3a.5.5 0 0 0 .276.445l.5 1.5a.5.5 0 0 0 .445.276h1.5a.5.5 0 0 0 .445-.276l.5-1.5a.5.5 0 0 0 .276-.445l-1.5-3a.5.5 0 0 0-.094-.676zM5 1.25a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1-.75-.75v-1.5z"/>
@@ -105,7 +105,40 @@
             </div>
 
             <div id="reviewsBlock" class="scrollable-block">
-
+                <!-- Форма для комментария -->
+                <div th:if="${user.id != currentUser.id}">
+                    <form th:action="@{/users/profile/{id}/comment(id=${user.id})}" method="post" th:object="${newProfileComment}" class="mb-4">
+                        <div class="mb-2">
+                            <label for="commentText" class="form-label">Комментарий</label>
+                            <textarea id="commentText" th:field="*{text}" class="form-control" rows="2" maxlength="2048" required></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Оценка:</label>
+                            <div>
+                                <span th:each="star : ${#numbers.sequence(1,5)}">
+                                    <input type="radio" th:field="*{rating}" th:value="${star}" th:id="'star' + ${star}" required>
+                                    <label th:for="'star' + ${star}" th:text="${star}">★</label>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Оставить комментарий</button>
+                    </form>
+                </div>
+                <!-- Список комментариев -->
+                <div th:if="${#lists.isEmpty(profileComments)}" class="text-muted">Нет комментариев</div>
+                <div th:each="comment : ${profileComments}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                <span th:if="${star <= comment.rating}" class="text-warning">&#9733;</span>
+                                <span th:if="${star > comment.rating}" class="text-secondary">&#9733;</span>
+                            </span>
+                            <span class="ms-2 text-muted small" th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                        </div>
+                        <div th:text="${comment.text}" class="mb-1"></div>
+                        <div class="text-muted small">Автор: <span th:text="${comment.author.username}"></span></div>
+                    </div>
+                </div>
             </div>
 
             <div id="salesBlock" class="d-none scrollable-block">
@@ -152,7 +185,7 @@
                                         <p class="card-text mt-auto text-success fw-bold">
                                             <span th:text="'$' + ${product.price}"></span>
                                         </p>
-                                        <div class="d-flex gap-2 mt-2">
+                                        <div class="d-flex gap-2 mt-2" th:if="${user.id == currentUser.id}">
                                             <form th:action="@{/catalog/product/{id}/deactivate(id=${product.id})}" method="post">
                                                 <button type="submit" class="btn btn-warning btn-sm">Снять с публикации</button>
                                             </form>

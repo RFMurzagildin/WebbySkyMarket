@@ -24,6 +24,9 @@ public class CartController {
     public String viewCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model) {
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
+        cart.setProducts(cart.getProducts().stream()
+            .filter(product -> product.getStatus() == com.example.webbyskymarket.enams.ProductStatus.ACTIVE)
+            .toList());
         model.addAttribute("cart", cart);
         return "cart/cart";
     }
