@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:8080
+
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username=muranis&password=123456
+
+### Получение всех активных продуктов
+GET {{baseUrl}}/api/products
+Accept: application/json
+
+### Получение продукта по ID
+GET {{baseUrl}}/api/products/1
+Accept: application/json
+
+### Удаление продукта
+DELETE {{baseUrl}}/api/products/1
+
+### Поиск продуктов по названию
+GET {{baseUrl}}/api/products/search?query=Фен
+Accept: application/json
+
+### Получение продуктов пользователя
+GET {{baseUrl}}/api/products/user/muranis
+Accept: application/json 

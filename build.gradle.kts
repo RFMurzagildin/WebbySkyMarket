@@ -24,7 +24,8 @@ repositories {
 }
 
 dependencies {
-
+	implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation("software.amazon.awssdk:url-connection-client:2.20.0")
 	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("software.amazon.awssdk:s3:2.20.0")

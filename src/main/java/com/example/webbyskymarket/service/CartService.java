@@ -30,10 +30,6 @@ public class CartService {
         Cart cart = getOrCreateCart(userId);
         Product product = productService.getProductById(productId);
 
-        if (product.getStatus() != com.example.webbyskymarket.enams.ProductStatus.ACTIVE) {
-            return false;
-        }
-
         if (cart.getProducts().contains(product)) {
             return false;
         }

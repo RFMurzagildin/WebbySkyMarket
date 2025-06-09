@@ -185,12 +185,17 @@
                             <i class="bi bi-check2-circle"></i>
                             <span th:text="${product.condition}">Condition</span>
                         </div>
+                        <div class="meta-item">
+                            <i class="bi bi-person"></i>
+                            <a th:href="@{/users/profile/{id}(id=${product.user.id})}" th:text="${product.user.username}">Owner</a>
+                        </div>
                     </div>
                     
                     <p class="product-description" th:text="${product.description}">Product description</p>
                     
                     <div class="d-flex justify-content-between align-items-center">
-                        <h2 class="product-price" th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}">$0.00</h2>
+                        <h2 class="product-price" th:if="${currency == 'USD'}" th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</h2>
+                        <h2 class="product-price" th:if="${currency == 'RUB'}" th:text="|${#numbers.formatDecimal(product.price * usdToRub, 1, 2)} ₽|">0.00 ₽</h2>
                         <button class="cart-button" 
                                 th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'"
                                 th:data-product-id="${product.id}">

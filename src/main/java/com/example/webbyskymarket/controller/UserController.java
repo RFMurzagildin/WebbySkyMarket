@@ -8,6 +8,7 @@ import com.example.webbyskymarket.service.ProductService;
 import com.example.webbyskymarket.service.ProfileCommentService;
 import com.example.webbyskymarket.service.StorageService;
 import com.example.webbyskymarket.service.UserService;
+import com.example.webbyskymarket.service.CurrencyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,9 +30,11 @@ public class UserController {
     private final ProductService productService;
     private final StorageService storageService;
     private final ProfileCommentService profileCommentService;
+    private final CurrencyService currencyService;
 
     @GetMapping("/profile/{id}")
-    public String userDetails(@PathVariable Long id, Model model, Authentication authentication){
+    public String userDetails(@PathVariable Long id, Model model, Authentication authentication,
+                             @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.getUserById(id);
         User currentUser = userService.findByUsername(authentication.getName());
         List<Product> activeProducts = productService.getProductsByUsernameAndStatus(user.getUsername(), ProductStatus.ACTIVE);
@@ -42,11 +45,14 @@ public class UserController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("profileComments", profileCommentService.getCommentsForUser(user));
         model.addAttribute("newProfileComment", new ProfileCommentDTO());
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "user/profile";
     }
 
     @GetMapping("/profile")
-    public String profilePage(Authentication authentication, Model model) {
+    public String profilePage(Authentication authentication, Model model,
+                             @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User currentUser = userService.findByUsername(authentication.getName());
         List<Product> activeProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.ACTIVE);
         List<Product> salesProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.SOLD);
@@ -56,6 +62,8 @@ public class UserController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("profileComments", profileCommentService.getCommentsForUser(currentUser));
         model.addAttribute("newProfileComment", new ProfileCommentDTO());
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "user/profile";
     }
 
