@@ -4,6 +4,8 @@ import com.example.webbyskymarket.enams.ProductCategory;
 import com.example.webbyskymarket.enams.ProductStatus;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByNameContainingIgnoreCaseAndStatusEquals(String name, ProductStatus status);
     List<Product> findByCategoryAndStatusEquals(String category, ProductStatus status);
     List<Product> findByUserAndStatusEquals(User user, ProductStatus status);
+    Page<Product> findByStatus(ProductStatus status, Pageable pageable);
 }

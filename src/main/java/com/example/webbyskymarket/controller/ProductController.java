@@ -15,6 +15,10 @@ import com.example.webbyskymarket.service.ReviewService;
 import com.example.webbyskymarket.service.StorageService;
 import com.example.webbyskymarket.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
@@ -167,5 +171,14 @@ public class ProductController {
             productService.saveProduct(product);
         }
         return "redirect:/users/profile";
+    }
+
+    @GetMapping("/api/products")
+    @ResponseBody
+    public Page<Product> getActiveProductsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return productService.findByStatus(ProductStatus.ACTIVE, pageable);
     }
 }

@@ -5,6 +5,7 @@
     <title>Add New Product</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
@@ -15,237 +16,423 @@
     <link rel="manifest" href="/images/logo/site.webmanifest" />
 
     <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --text-color: #34495e;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        }
+
         .form-container {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 900px;
+            margin: 2rem auto;
             padding: 2rem;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg), 0 15px 30px rgba(0,0,0,0.1);
         }
 
         .section-title {
-            color: #2c3e50;
-            font-weight: 600;
+            color: var(--secondary-color);
+            font-weight: 700;
             margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
         }
 
         .form-label {
-            font-weight: 500;
-            color: #34495e;
-            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .form-label-icon {
-            margin-right: 0.5rem;
-            color: #3498db;
+            color: var(--primary-color);
+            font-size: 1.1rem;
         }
 
         .input-wrapper {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
         }
 
+        .input-wrapper:nth-child(1) { animation-delay: 0.1s; }
+        .input-wrapper:nth-child(2) { animation-delay: 0.2s; }
+        .input-wrapper:nth-child(3) { animation-delay: 0.3s; }
+        .input-wrapper:nth-child(4) { animation-delay: 0.4s; }
+        .input-wrapper:nth-child(5) { animation-delay: 0.5s; }
+        .input-wrapper:nth-child(6) { animation-delay: 0.6s; }
+
         .form-control, .form-select {
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            transition: var(--transition);
+            font-size: 1rem;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+            transform: translateY(-2px);
         }
 
         .image-preview {
             width: 100%;
             height: 200px;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
             overflow: hidden;
             position: relative;
+            transition: var(--transition);
+            background: var(--light-bg);
+        }
+
+        .image-preview:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
         .image-preview img {
             max-width: 100%;
             max-height: 100%;
             object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .image-preview:hover img {
+            transform: scale(1.05);
         }
 
         .image-preview-placeholder {
-            color: #6c757d;
+            color: var(--text-color);
             text-align: center;
+            transition: var(--transition);
         }
 
         .image-preview-placeholder i {
             font-size: 3rem;
             margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .image-preview:hover .image-preview-placeholder {
+            transform: scale(1.1);
         }
 
         .btn-submit {
-            background-color: #3498db;
+            background-color: var(--primary-color);
             border: none;
-            padding: 0.75rem 2rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            padding: 1rem 2.5rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-submit:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-submit:hover::after {
+            width: 300px;
+            height: 300px;
         }
 
         .condition-badge {
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            margin-right: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            border: 2px solid var(--border-color);
+            font-weight: 500;
         }
 
         .condition-badge:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
         }
 
         .condition-badge.active {
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
         }
 
         .condition-badge:not(.active) {
-            background-color: #f8f9fa;
-            color: #6c757d;
+            background-color: white;
+            color: var(--text-color);
+        }
+
+        .condition-badge:not(.active):hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        .form-select option {
+            padding: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--primary-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .form-section {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .custom-file-input {
+            display: none;
+        }
+
+        .custom-file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            border: 2px solid var(--border-color, #e9ecef);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text-color, #34495e);
+            cursor: pointer;
+            transition: border-color 0.3s;
+            font-size: 1.05rem;
+            font-weight: 500;
+            gap: 0.5rem;
+        }
+
+        .custom-file-label:hover {
+            border-color: var(--primary-color, #3498db);
+            background: #f8f9fa;
         }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100">
+
+<div class="progress-bar"></div>
 
 <header th:replace="~{fragment/fragments :: header}"></header>
 
 <main class="flex-grow-1 py-4">
-    <div class="container form-container">
+    <div class="container form-container animate__animated animate__fadeIn">
         <h2 class="section-title text-center mb-4">
             <i class="bi bi-plus-circle me-2"></i> Add New Product
         </h2>
 
-        <form action="/catalog/new-product" method="post" enctype="multipart/form-data">
+        <form action="/catalog/new-product" method="post" enctype="multipart/form-data" id="productForm">
             <div class="row">
                 <div class="col-md-6">
-                    <!-- Product Name -->
-                    <div class="mb-3 input-wrapper">
-                        <label for="name" class="form-label">
-                            <i class="bi bi-tag form-label-icon"></i>Product Name
-                        </label>
-                        <input type="text" class="form-control" id="name" name="name" required
-                               placeholder="Enter product name">
-                    </div>
-
-                    <!-- Price -->
-                    <div class="mb-3 input-wrapper">
-                        <label for="price" class="form-label">
-                            <i class="bi bi-currency-dollar form-label-icon"></i>Price
-                        </label>
-                        <input type="number" class="form-control" id="price" name="price" required
-                               placeholder="Enter price" step="0.01" min="0">
-                    </div>
-
-                    <!-- Category -->
-                    <div class="mb-3 input-wrapper">
-                        <label for="category" class="form-label">
-                            <i class="bi bi-list-ul form-label-icon"></i>Category
-                        </label>
-                        <select class="form-select" id="category" name="category" required>
-                            <option value="" disabled selected>Select a category</option>
-                            <option value="ANIMALS">Animals</option>
-                            <option value="REAL_ESTATE">Real Estate</option>
-                            <option value="TRANSPORT">Transport</option>
-                            <option value="ELECTRONICS">Electronics</option>
-                            <option value="FURNITURE">Furniture</option>
-                            <option value="CLOTHING">Clothing</option>
-                            <option value="SPORTS">Sports</option>
-                            <option value="BEAUTY_AND_HEALTH">Beauty and Health</option>
-                            <option value="FOOD">Food</option>
-                            <option value="BOOKS">Books</option>
-                            <option value="TOOLS">Tools</option>
-                        </select>
-                    </div>
-
-                    <!-- Condition -->
-                    <div class="mb-3 input-wrapper">
-                        <label class="form-label">
-                            <i class="bi bi-check2-circle form-label-icon"></i>Condition
-                        </label>
-                        <div class="d-flex gap-2">
-                            <div class="condition-badge active" data-value="NEW">
-                                <i class="bi bi-star-fill me-1"></i>New
-                            </div>
-                            <div class="condition-badge" data-value="USED">
-                                <i class="bi bi-star-half me-1"></i>Used
-                            </div>
+                    <div class="form-section">
+                        <!-- Product Name -->
+                        <div class="input-wrapper">
+                            <label for="name" class="form-label">
+                                <i class="bi bi-tag form-label-icon"></i>Product Name
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="Enter product name">
                         </div>
-                        <input type="hidden" name="condition" id="condition" value="NEW" required>
+
+                        <!-- Price -->
+                        <div class="input-wrapper">
+                            <label for="price" class="form-label">
+                                <i class="bi bi-currency-dollar form-label-icon"></i>Price
+                            </label>
+                            <input type="number" class="form-control" id="price" name="price" required
+                                   placeholder="Enter price" step="0.01" min="0">
+                        </div>
+
+                        <!-- Category -->
+                        <div class="input-wrapper">
+                            <label for="category" class="form-label">
+                                <i class="bi bi-list-ul form-label-icon"></i>Category
+                            </label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="" disabled selected>Select a category</option>
+                                <option value="ANIMALS">Animals</option>
+                                <option value="REAL_ESTATE">Real Estate</option>
+                                <option value="TRANSPORT">Transport</option>
+                                <option value="ELECTRONICS">Electronics</option>
+                                <option value="FURNITURE">Furniture</option>
+                                <option value="CLOTHING">Clothing</option>
+                                <option value="SPORTS">Sports</option>
+                                <option value="BEAUTY_AND_HEALTH">Beauty and Health</option>
+                                <option value="FOOD">Food</option>
+                                <option value="BOOKS">Books</option>
+                                <option value="TOOLS">Tools</option>
+                            </select>
+                        </div>
+
+                        <!-- Condition -->
+                        <div class="input-wrapper">
+                            <label class="form-label">
+                                <i class="bi bi-check2-circle form-label-icon"></i>Condition
+                            </label>
+                            <div class="d-flex gap-2">
+                                <div class="condition-badge active" data-value="NEW">
+                                    <i class="bi bi-star-fill me-1"></i>New
+                                </div>
+                                <div class="condition-badge" data-value="USED">
+                                    <i class="bi bi-star-half me-1"></i>Used
+                                </div>
+                            </div>
+                            <input type="hidden" name="condition" id="condition" value="NEW" required>
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <!-- Description -->
-                    <div class="mb-3 input-wrapper">
-                        <label for="description" class="form-label">
-                            <i class="bi bi-card-text form-label-icon"></i>Description
-                        </label>
-                        <textarea class="form-control" id="description" name="description" rows="4" required
-                                  placeholder="Enter product description"></textarea>
-                    </div>
+                    <div class="form-section">
+                        <!-- Description -->
+                        <div class="input-wrapper">
+                            <label for="description" class="form-label">
+                                <i class="bi bi-card-text form-label-icon"></i>Description
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required
+                                      placeholder="Enter product description"></textarea>
+                        </div>
 
-                    <!-- Address -->
-                    <div class="mb-3 input-wrapper">
-                        <label for="address" class="form-label">
-                            <i class="bi bi-geo-alt form-label-icon"></i>Location
-                        </label>
-                        <input type="text" class="form-control" id="address" name="address" required
-                               placeholder="Enter product location">
-                    </div>
+                        <!-- Address -->
+                        <div class="input-wrapper">
+                            <label for="address" class="form-label">
+                                <i class="bi bi-geo-alt form-label-icon"></i>Location
+                            </label>
+                            <input type="text" class="form-control" id="address" name="address" required
+                                   placeholder="Enter product location">
+                        </div>
 
-                    <!-- Images -->
-                    <div class="mb-3 input-wrapper">
-                        <label class="form-label">
-                            <i class="bi bi-image form-label-icon"></i>Product Images
-                        </label>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview1">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Main Image</p>
+                        <!-- Images -->
+                        <div class="input-wrapper">
+                            <label class="form-label">
+                                <i class="bi bi-image form-label-icon"></i>Product Images
+                            </label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="image-preview" id="preview1">
+                                        <div class="image-preview-placeholder">
+                                            <i class="bi bi-image"></i>
+                                            <p>Main Image</p>
+                                        </div>
                                     </div>
+                                    <label class="custom-file-label" for="image1">
+                                        <i class="bi bi-upload"></i> <span></span>
+                                        <input type="file" class="custom-file-input" id="image1" name="image1" accept="image/*" required onchange="previewImage(this, 'preview1');">
+                                    </label>
                                 </div>
-                                <input type="file" class="form-control" name="image1" accept="image/*" required
-                                       onchange="previewImage(this, 'preview1')">
-                            </div>
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview2">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Image 2</p>
+                                <div class="col-md-4">
+                                    <div class="image-preview" id="preview2">
+                                        <div class="image-preview-placeholder">
+                                            <i class="bi bi-image"></i>
+                                            <p>Image 2</p>
+                                        </div>
                                     </div>
+                                    <label class="custom-file-label" for="image2">
+                                        <i class="bi bi-upload"></i> <span></span>
+                                        <input type="file" class="custom-file-input" id="image2" name="image2" accept="image/*" onchange="previewImage(this, 'preview2');">
+                                    </label>
                                 </div>
-                                <input type="file" class="form-control" name="image2" accept="image/*"
-                                       onchange="previewImage(this, 'preview2')">
-                            </div>
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview3">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Image 3</p>
+                                <div class="col-md-4">
+                                    <div class="image-preview" id="preview3">
+                                        <div class="image-preview-placeholder">
+                                            <i class="bi bi-image"></i>
+                                            <p>Image 3</p>
+                                        </div>
                                     </div>
+                                    <label class="custom-file-label" for="image3">
+                                        <i class="bi bi-upload"></i> <span></span>
+                                        <input type="file" class="custom-file-input" id="image3" name="image3" accept="image/*" onchange="previewImage(this, 'preview3');">
+                                    </label>
                                 </div>
-                                <input type="file" class="form-control" name="image3" accept="image/*"
-                                       onchange="previewImage(this, 'preview3')">
                             </div>
                         </div>
                     </div>
@@ -253,7 +440,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary btn-submit">
+                <button type="submit" class="btn btn-submit">
                     <i class="bi bi-plus-circle me-2"></i>Add Product
                 </button>
             </div>
@@ -265,32 +452,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function previewImage(input, previewId) {
-    const preview = document.getElementById(previewId);
-    const placeholder = preview.querySelector('.image-preview-placeholder');
-    
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            if (placeholder) {
-                preview.removeChild(placeholder);
-            }
-            
-            let img = preview.querySelector('img');
-            if (!img) {
-                img = document.createElement('img');
-                preview.appendChild(img);
-            }
-            
-            img.src = e.target.result;
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
+    // Condition badges
     const conditionBadges = document.querySelectorAll('.condition-badge');
     const conditionInput = document.getElementById('condition');
 
@@ -300,6 +463,65 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
             conditionInput.value = this.dataset.value;
         });
+    });
+
+    // Form progress bar
+    const form = document.getElementById('productForm');
+    const progressBar = document.querySelector('.progress-bar');
+    const inputs = form.querySelectorAll('input, select, textarea');
+    const totalInputs = inputs.length;
+    let filledInputs = 0;
+
+    function updateProgress() {
+        filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '').length;
+        const progress = (filledInputs / totalInputs) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    inputs.forEach(input => {
+        input.addEventListener('input', updateProgress);
+        input.addEventListener('change', updateProgress);
+    });
+
+    // Image preview
+    window.previewImage = function(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = `
+                <div class="image-preview-placeholder">
+                    <i class="bi bi-image"></i>
+                    <p>${previewId === 'preview1' ? 'Main Image' : 'Image ' + previewId.slice(-1)}</p>
+                </div>
+            `;
+        }
+    }
+
+    // Form validation animation
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('animate__animated', 'animate__shakeX');
+                setTimeout(() => {
+                    field.classList.remove('animate__animated', 'animate__shakeX');
+                }, 1000);
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+        }
     });
 });
 </script>

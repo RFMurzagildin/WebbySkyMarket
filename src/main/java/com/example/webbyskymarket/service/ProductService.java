@@ -7,6 +7,8 @@ import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -99,5 +101,9 @@ public class ProductService {
     public List<Product> getActiveProductsByUsername(String username) {
         User user = userService.getUserByUsername(username);
         return productRepository.findByUserAndStatusEquals(user, ProductStatus.ACTIVE);
+    }
+
+    public Page<Product> findByStatus(ProductStatus status, Pageable pageable) {
+        return productRepository.findByStatus(status, pageable);
     }
 }

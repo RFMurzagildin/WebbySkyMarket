@@ -1,70 +1,82 @@
 package com.example.webbyskymarket.controller;
 
 import com.example.webbyskymarket.models.Cart;
+import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.service.CartService;
-import com.example.webbyskymarket.service.UserService;
 import com.example.webbyskymarket.service.CurrencyService;
-import lombok.RequiredArgsConstructor;
+import com.example.webbyskymarket.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/cart")
-@RequiredArgsConstructor
 public class CartController {
-    private final CartService cartService;
-    private final UserService userService;
-    private final CurrencyService currencyService;
 
-    @GetMapping
-    public String viewCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model,
-                          @CookieValue(value = "currency", defaultValue = "USD") String currency) {
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private CurrencyService currencyService;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/cart")
+    public String showCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model) {
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
-        cart.setProducts(cart.getProducts().stream()
-            .filter(product -> product.getStatus() == com.example.webbyskymarket.enams.ProductStatus.ACTIVE)
-            .toList());
         model.addAttribute("cart", cart);
-        model.addAttribute("currency", currency);
         model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "cart/cart";
     }
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/cart/remove/{id}")
     @ResponseBody
-    public Map<String, Object> addToCart(@PathVariable Long productId, 
-                          @CurrentSecurityContext(expression = "authentication?.name") String username) {
+    public String removeFromCart(@PathVariable Long id, @CurrentSecurityContext(expression = "authentication?.name") String username) {
         User user = userService.findByUsername(username);
-        boolean success = cartService.addToCart(user.getId(), productId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", success);
-        response.put("message", success ? "Product added to cart" : "Product is already in cart");
-        return response;
+        cartService.removeFromCart(user.getId(), id);
+        return "Item removed from cart";
     }
 
-    @PostMapping("/remove/{productId}")
+    @PostMapping("/cart/add/{id}")
     @ResponseBody
-    public Map<String, Object> removeFromCart(@PathVariable Long productId,
-                               @CurrentSecurityContext(expression = "authentication?.name") String username) {
+    public String addToCart(@PathVariable Long id, @CurrentSecurityContext(expression = "authentication?.name") String username) {
         User user = userService.findByUsername(username);
-        boolean success = cartService.removeFromCart(user.getId(), productId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", success);
-        response.put("message", success ? "Product removed from cart" : "Product was not in cart");
-        return response;
+        cartService.addToCart(user.getId(), id);
+        return "Item added to cart";
     }
 
-    @PostMapping("/clear")
+    @PostMapping("/cart/clear")
     @ResponseBody
     public String clearCart(@CurrentSecurityContext(expression = "authentication?.name") String username) {
         User user = userService.findByUsername(username);
         cartService.clearCart(user.getId());
         return "Cart cleared";
+    }
+
+    @GetMapping("/cart/summary")
+    @ResponseBody
+    public Map<String, BigDecimal> getCartSummary(@CurrentSecurityContext(expression = "authentication?.name") String username) {
+        User user = userService.findByUsername(username);
+        Cart cart = cartService.getOrCreateCart(user);
+        BigDecimal subtotal = cart != null && cart.getProducts() != null ? 
+            cart.getProducts().stream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add) : 
+            BigDecimal.ZERO;
+            
+        BigDecimal subtotalRub = subtotal.multiply(currencyService.getUsdToRub());
+        
+        Map<String, BigDecimal> summary = new HashMap<>();
+        summary.put("subtotal", subtotal);
+        summary.put("subtotalRub", subtotalRub);
+        return summary;
     }
 } 

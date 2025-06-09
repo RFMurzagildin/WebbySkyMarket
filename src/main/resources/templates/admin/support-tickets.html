@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Support Tickets Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/admin-panel.css">
+
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+    <style>
+        .ticket-card {
+            transition: transform 0.2s;
+        }
+        .ticket-card:hover {
+            transform: translateY(-2px);
+        }
+        .status-badge {
+            font-size: 0.9em;
+            padding: 0.5em 1em;
+        }
+        .ticket-message {
+            max-height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <header th:replace="~{fragment/fragments :: header}"></header>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Support Tickets Management</h2>
+            <a th:href="@{/admin}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Back to Admin Panel
+            </a>
+        </div>
+
+        <div class="filter-section">
+            <form th:action="@{/admin/support-tickets}" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option th:each="status : ${T(com.example.webbyskymarket.enams.TicketStatus).values()}"
+                                th:value="${status}"
+                                th:text="${status}"
+                                th:selected="${param.status != null && param.status[0] == status.toString()}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="Search by subject or username..."
+                           th:value="${param.search}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div th:each="ticket : ${tickets}" class="col">
+                <div class="card h-100 ticket-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0" th:text="${ticket.subject}"></h5>
+                        <span th:class="${'badge status-badge ' + 
+                            (ticket.status.name() == 'OPEN' ? 'bg-warning' : 
+                             ticket.status.name() == 'IN_PROGRESS' ? 'bg-info' : 
+                             ticket.status.name() == 'RESOLVED' ? 'bg-success' : 'bg-secondary')}"
+                              th:text="${ticket.status}">
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text ticket-message" th:text="${ticket.message}"></p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i>
+                                <span th:text="${ticket.user.username}"></span>
+                            </small>
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i>
+                                <span th:text="${#temporals.format(ticket.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-sm btn-outline-primary view-ticket" 
+                                    th:data-ticket-id="${ticket.id}">
+                                <i class="bi bi-eye"></i> View Details
+                            </button>
+                            <div class="btn-group">
+                                <button th:if="${ticket.status.name() == 'OPEN'}"
+                                        class="btn btn-sm btn-outline-info change-status"
+                                        data-status="IN_PROGRESS"
+                                        th:data-ticket-id="${ticket.id}">
+                                    <i class="bi bi-arrow-right-circle"></i> In Progress
+                                </button>
+                                <button th:if="${ticket.status.name() == 'IN_PROGRESS'}"
+                                        class="btn btn-sm btn-outline-success change-status"
+                                        data-status="RESOLVED"
+                                        th:data-ticket-id="${ticket.id}">
+                                    <i class="bi bi-check-circle"></i> Resolve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Details Modal -->
+    <div class="modal fade" id="ticketModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ticket Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6>Subject</h6>
+                        <p id="modalSubject" class="mb-3"></p>
+                        <h6>Message</h6>
+                        <p id="modalMessage" class="mb-3"></p>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i>
+                                <span id="modalUsername"></span>
+                            </small>
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i>
+                                <span id="modalDate"></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragment/fragments :: footer}"></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View ticket details
+    document.querySelectorAll('.view-ticket').forEach(button => {
+        button.addEventListener('click', function() {
+            const ticketId = this.dataset.ticketId;
+            fetch(`/admin/support-tickets/${ticketId}`)
+                .then(response => response.json())
+                .then(ticket => {
+                    document.getElementById('modalSubject').textContent = ticket.subject;
+                    document.getElementById('modalMessage').textContent = ticket.message;
+                    document.getElementById('modalUsername').textContent = ticket.user.username;
+                    document.getElementById('modalDate').textContent = new Date(ticket.createdAt).toLocaleString();
+                    new bootstrap.Modal(document.getElementById('ticketModal')).show();
+                });
+        });
+    });
+
+    // Change ticket status
+    document.querySelectorAll('.change-status').forEach(button => {
+        button.addEventListener('click', function() {
+            const ticketId = this.dataset.ticketId;
+            const newStatus = this.dataset.status;
+            
+            fetch(`/admin/support-tickets/${ticketId}/status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            });
+        });
+    });
+});
+</script>
+</body>
+</html> 
