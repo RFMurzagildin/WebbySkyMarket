@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Add New Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #34495e;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label-icon {
+            margin-right: 0.5rem;
+            color: #3498db;
+        }
+
+        .input-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-placeholder {
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .image-preview-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-submit {
+            background-color: #3498db;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .condition-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .condition-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        .condition-badge.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .condition-badge:not(.active) {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<header th:replace="~{fragment/fragments :: header}"></header>
+
+<main class="flex-grow-1 py-4">
+    <div class="container form-container">
+        <h2 class="section-title text-center mb-4">
+            <i class="bi bi-plus-circle me-2"></i> Add New Product
+        </h2>
+
+        <form action="/catalog/new-product" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Product Name -->
+                    <div class="mb-3 input-wrapper">
+                        <label for="name" class="form-label">
+                            <i class="bi bi-tag form-label-icon"></i>Product Name
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                               placeholder="Enter product name">
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-3 input-wrapper">
+                        <label for="price" class="form-label">
+                            <i class="bi bi-currency-dollar form-label-icon"></i>Price
+                        </label>
+                        <input type="number" class="form-control" id="price" name="price" required
+                               placeholder="Enter price" step="0.01" min="0">
+                    </div>
+
+                    <!-- Category -->
+                    <div class="mb-3 input-wrapper">
+                        <label for="category" class="form-label">
+                            <i class="bi bi-list-ul form-label-icon"></i>Category
+                        </label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="ANIMALS">Animals</option>
+                            <option value="REAL_ESTATE">Real Estate</option>
+                            <option value="TRANSPORT">Transport</option>
+                            <option value="ELECTRONICS">Electronics</option>
+                            <option value="FURNITURE">Furniture</option>
+                            <option value="CLOTHING">Clothing</option>
+                            <option value="SPORTS">Sports</option>
+                            <option value="BEAUTY_AND_HEALTH">Beauty and Health</option>
+                            <option value="FOOD">Food</option>
+                            <option value="BOOKS">Books</option>
+                            <option value="TOOLS">Tools</option>
+                        </select>
+                    </div>
+
+                    <!-- Condition -->
+                    <div class="mb-3 input-wrapper">
+                        <label class="form-label">
+                            <i class="bi bi-check2-circle form-label-icon"></i>Condition
+                        </label>
+                        <div class="d-flex gap-2">
+                            <div class="condition-badge active" data-value="NEW">
+                                <i class="bi bi-star-fill me-1"></i>New
+                            </div>
+                            <div class="condition-badge" data-value="USED">
+                                <i class="bi bi-star-half me-1"></i>Used
+                            </div>
+                        </div>
+                        <input type="hidden" name="condition" id="condition" value="NEW" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Description -->
+                    <div class="mb-3 input-wrapper">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-card-text form-label-icon"></i>Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required
+                                  placeholder="Enter product description"></textarea>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="mb-3 input-wrapper">
+                        <label for="address" class="form-label">
+                            <i class="bi bi-geo-alt form-label-icon"></i>Location
+                        </label>
+                        <input type="text" class="form-control" id="address" name="address" required
+                               placeholder="Enter product location">
+                    </div>
+
+                    <!-- Images -->
+                    <div class="mb-3 input-wrapper">
+                        <label class="form-label">
+                            <i class="bi bi-image form-label-icon"></i>Product Images
+                        </label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="image-preview" id="preview1">
+                                    <div class="image-preview-placeholder">
+                                        <i class="bi bi-image"></i>
+                                        <p>Main Image</p>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control" name="image1" accept="image/*" required
+                                       onchange="previewImage(this, 'preview1')">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="image-preview" id="preview2">
+                                    <div class="image-preview-placeholder">
+                                        <i class="bi bi-image"></i>
+                                        <p>Image 2</p>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control" name="image2" accept="image/*"
+                                       onchange="previewImage(this, 'preview2')">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="image-preview" id="preview3">
+                                    <div class="image-preview-placeholder">
+                                        <i class="bi bi-image"></i>
+                                        <p>Image 3</p>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control" name="image3" accept="image/*"
+                                       onchange="previewImage(this, 'preview3')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="bi bi-plus-circle me-2"></i>Add Product
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragment/fragments :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const placeholder = preview.querySelector('.image-preview-placeholder');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            if (placeholder) {
+                preview.removeChild(placeholder);
+            }
+            
+            let img = preview.querySelector('img');
+            if (!img) {
+                img = document.createElement('img');
+                preview.appendChild(img);
+            }
+            
+            img.src = e.target.result;
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const conditionBadges = document.querySelectorAll('.condition-badge');
+    const conditionInput = document.getElementById('condition');
+
+    conditionBadges.forEach(badge => {
+        badge.addEventListener('click', function() {
+            conditionBadges.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            conditionInput.value = this.dataset.value;
+        });
+    });
+});
+</script>
+</body>
+</html>

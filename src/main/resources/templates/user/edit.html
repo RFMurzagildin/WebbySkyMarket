@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/edit.css">
+
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+<header th:replace="~{fragment/fragments :: header}"></header>
+
+<main class="flex-grow-1 d-flex p-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Profile Picture</h5>
+
+                        <label for="avatarUpload" style="cursor: pointer;">
+                            <img th:src="${user.image != null ? user.image : (user.gender == 'MALE' ? '/images/default-avatar-man.png' : '/images/default-avatar-woman.png')}"
+                                 alt="User Avatar"
+                                 class="rounded-circle border border-3 border-primary avatar-hover"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </label>
+                        <p class="mt-2"><small>JPG or PNG no larger than 5 MB</small></p>
+
+                        <input type="file" id="avatarUpload" class="d-none" accept="image/*" onchange="previewAvatar(event)">
+
+                        <button id="saveAvatarButton" class="btn btn-success btn-sm mt-2 d-none" onclick="uploadAvatar()">Save Avatar</button>
+
+                        <div th:replace="~{fragment/fragments :: logout}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Account Details</h5>
+                        <form action="/profile/edit" method="post">
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" th:value="${user.username}" required>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="surname" class="form-label">Surname</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" th:value="${user.surname}" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:value="${user.phoneNumber}" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number">
+                                <small class="form-text text-muted">Format: 1234567890</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="male" value="MALE" th:checked="${user.gender == 'MALE'}">
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="female" value="FEMALE" th:checked="${user.gender == 'FEMALE'}">
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+                                <small class="form-text text-muted">Enter a new password to change it</small>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                            </div>
+
+                            <!-- Кнопка сохранения -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{fragment/fragments :: footer}"></footer>
+
+<!-- Подключение скриптов -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Предпросмотр выбранного аватара
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.querySelector('.avatar-hover');
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            // Показать кнопку сохранения
+            document.getElementById('saveAvatarButton').classList.remove('d-none');
+        }
+    }
+
+    // Отправка аватара на сервер
+    function uploadAvatar() {
+        const fileInput = document.getElementById('avatarUpload');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Please select an image to upload.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        fetch('users/profile/upload-image', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Avatar uploaded successfully!');
+                    // Скрыть кнопку сохранения после успешной загрузки
+                    document.getElementById('saveAvatarButton').classList.add('d-none');
+                } else {
+                    alert('Failed to upload avatar. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading avatar:', error);
+                alert('An error occurred while uploading the avatar.');
+            });
+    }
+</script>
+</body>
+</html>

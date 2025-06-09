@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Unblocked</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f9f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-height: 60px;
+        }
+
+        h2 {
+            color: #4591f8;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .btn-login {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 16px;
+            color: white;
+            background-color: #2a9d8f;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="email-container">
+
+    <h2>Your Account Has Been Unblocked</h2>
+
+    <p>Hello, <strong th:text="${username}"></strong>!</p>
+
+    <p>We are pleased to inform you that your account has been successfully unblocked by the administrator.</p>
+
+    <p>You can now log in and continue using our services as usual:</p>
+    <p style="text-align: center;">
+        <a href="https://webbyskymarket.com/login" class="btn-login">Log In Now</a>
+    </p>
+
+    <p>If you have any questions or need further assistance, feel free to contact us.</p>
+
+    <div class="footer">
+        <p>Thank you,<br><strong>WebbySkyMarket Team</strong></p>
+        <p>&copy; 2025 WebbySkyMarket. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

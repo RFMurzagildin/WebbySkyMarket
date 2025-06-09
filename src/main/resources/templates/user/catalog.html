@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+
+    <style>
+        .product-card {
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .product-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            color: #3498db;
+        }
+
+        .cart-heart {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .cart-heart:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-heart.text-danger {
+            color: #e74c3c !important;
+        }
+
+        .cart-heart.text-muted {
+            color: #95a5a6 !important;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+
+        .search-container {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .category-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .category-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<header th:replace="~{fragment/fragments :: header}"></header>
+
+<main class="flex-grow-1 py-4">
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <form action="/catalog/search_by_product_name" method="get" class="d-flex gap-2">
+                        <input type="text" name="query" class="form-control" placeholder="Search products..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </form>
+                    
+                    <div class="category-buttons">
+                        <a th:each="category : ${T(com.example.webbyskymarket.enams.ProductCategory).values()}"
+                           th:href="@{/catalog/search_by_category(category=${category})}"
+                           class="category-button">
+                            <i class="bi bi-tag"></i>
+                            <span th:text="${category.category}">Category</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4">
+            <div class="col-md-4 col-lg-3" th:each="product : ${products}">
+                <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="text-decoration-none">
+                    <div class="card product-card">
+                        <div class="position-relative">
+                            <img th:if="${product.imagePath1 != null}"
+                                 th:src="@{${product.imagePath1}}" 
+                                 th:alt="${product.name}" 
+                                 class="product-image">
+                            <span class="category-badge" th:text="${product.category}">Category</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title text-dark">
+                                <span th:text="${product.name}">Product Name</span>
+                            </h5>
+                            <p class="product-description" th:text="${product.description}">Product description</p>
+                            <div class="product-meta">
+                                <div class="d-flex align-items-center">
+                                    <div class="meta-item">
+                                        <i class="bi bi-tag"></i>
+                                        <span th:text="${product.category}">Category</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="product-price" th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                                    <button type="button" 
+                                            class="cart-heart" 
+                                            th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-danger' : 'text-muted'"
+                                            th:data-product-id="${product.id}"
+                                            onclick="event.preventDefault(); event.stopPropagation();">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragment/fragments :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heartButtons = document.querySelectorAll('.cart-heart');
+    
+    heartButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = this.dataset.productId;
+            const isInCart = this.classList.contains('text-danger');
+            
+            fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.classList.toggle('text-danger');
+                    this.classList.toggle('text-muted');
+                }
+                // Optional: show a message to the user
+                // alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the cart');
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>

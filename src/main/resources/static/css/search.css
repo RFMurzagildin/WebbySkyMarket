@@ -1,0 +1,23 @@
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.product-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Показывать только 3 строки */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5; /* Высота строки */
+    max-height: 4.5em; /* 3 строки * высота строки */
+}

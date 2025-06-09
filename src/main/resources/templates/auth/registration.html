@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- Твоя иконка -->
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/images/logo/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/images/logo/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/images/logo/apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .registration-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .registration-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .registration-row {
+            min-height: 600px;
+        }
+
+        .registration-image {
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .registration-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover;
+            opacity: 0.1;
+        }
+
+        .registration-form {
+            padding: 3rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            background: #3498db;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtext {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .feature-list {
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-floating > .form-control {
+            height: calc(3.5rem + 2px);
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating > label {
+            padding: 1rem 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-container">
+        <div class="registration-card">
+            <div class="row registration-row g-0">
+                <!-- Left side - Image and Welcome -->
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="registration-image">
+                        <h1 class="welcome-text">Join Us Today!</h1>
+                        <p class="welcome-subtext">Create your account and start shopping</p>
+                        
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <span>Secure Shopping</span>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <span>Fast Delivery</span>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="bi bi-currency-dollar"></i>
+                                </div>
+                                <span>Best Prices</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right side - Registration Form -->
+                <div class="col-lg-6">
+                    <div class="registration-form">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold">Create Account</h2>
+                            <p class="text-muted">Fill in your details to get started</p>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            <span th:text="${error}"></span>
+                        </div>
+
+                        <form action="/registration" method="post" th:object="${registrationDTO}">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="name" 
+                                           th:field="*{name}"
+                                           placeholder="Enter your name"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="surname" class="form-label">Surname</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="surname" 
+                                           th:field="*{surname}"
+                                           placeholder="Enter your surname"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           th:field="*{username}"
+                                           placeholder="Choose a username"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           th:field="*{email}"
+                                           placeholder="Enter your email"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           th:field="*{password}"
+                                           placeholder="Create a password"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </span>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirmPassword" 
+                                           th:field="*{confirmPassword}"
+                                           placeholder="Confirm your password"
+                                           required>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-gender-ambiguous"></i>
+                                    </span>
+                                    <select class="form-select" id="gender" th:field="*{gender}" required>
+                                        <option value="" disabled selected>Select Gender</option>
+                                        <option value="MALE">Male</option>
+                                        <option value="FEMALE">Female</option>
+                                    </select>
+                                </div>
+                                <small class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                Create Account
+                            </button>
+
+                            <div class="text-center">
+                                <p class="mb-0">Already have an account? 
+                                    <a href="/login" class="text-decoration-none">Sign in</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

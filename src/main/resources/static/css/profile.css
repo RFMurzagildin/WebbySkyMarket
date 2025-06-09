@@ -1,0 +1,40 @@
+.scrollable-block {
+    max-height: 480px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+main {
+    display: flex;
+    gap: 20px;
+}
+
+.card.shadow.me-4 {
+    flex-shrink: 0;
+    width: 300px;
+    min-width: 300px;
+}
+
+.card.shadow.flex-grow-1 {
+    flex-grow: 1;
+}
+.product-image {
+    height: 200px;
+    object-fit: cover;
+}
+.product-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    max-height: 4.5em;
+}

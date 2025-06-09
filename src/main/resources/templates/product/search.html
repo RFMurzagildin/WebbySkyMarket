@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/search.css">
+
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+</head>
+<body>
+<header th:replace="~{fragment/fragments :: header}"></header>
+<div class="container mt-4">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6 d-flex">
+            <div class="dropdown me-2">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    All Categories
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <li><a class="dropdown-item" href="/catalog/search?category=animals">Animals</a></li>
+                    <li><a class="dropdown-item" href="/catalog/search?category=real estate">Real Estate</a></li>
+                    <li><a class="dropdown-item" href="/catalog/search?category=transport">Transport</a></li>
+                    <li><a class="dropdown-item" href="/catalog/search?category=electronics">Electronics</a></li>
+                    <li><a class="dropdown-item" href="/catalog/search?category=furniture">Furniture</a></li>
+                </ul>
+            </div>
+
+            <form action="/catalog/search" method="get" class="input-group flex-grow-1">
+                <input type="text" name="category" class="form-control" placeholder="Enter product name..." aria-label="Search">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <h1 class="text mb-4">Products</h1>
+    <div class="row">
+        <div th:each="product : ${products}" class="col-md-4 mb-4">
+            <div class="card h-100 position-relative">
+                <button class="btn btn-link position-absolute top-0 end-0 p-2 cart-heart"
+                        th:data-product-id="${product.id}"
+                        th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-danger' : 'text-muted'">
+                    <i class="bi bi-heart-fill fs-4"></i>
+                </button>
+                <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="card-link">
+                    <img th:if="${product.imagePath1 != null}"
+                         th:src="@{${product.imagePath1}}"
+                         class="card-img-top"
+                         alt="Product Image"
+                         style="height: 200px; object-fit: cover;">
+
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${product.name}"></h5>
+                        <p class="card-text product-description" th:text="${product.description}"></p>
+                        <p class="card-text"><strong>Price:</strong> $<span th:text="${product.price}"></span></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragment/fragments :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.cart-heart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.dataset.productId;
+            const isInCart = this.classList.contains('text-danger');
+            
+            fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    this.classList.toggle('text-danger');
+                    this.classList.toggle('text-muted');
+                }
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>

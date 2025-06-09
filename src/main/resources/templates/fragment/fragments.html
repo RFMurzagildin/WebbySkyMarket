@@ -1,0 +1,51 @@
+
+<div th:fragment="logout">
+    <form action="/logout" method="post" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            Logout
+        </button>
+    </form>
+</div>
+
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+
+            <a class="navbar-brand d-flex align-items-center" href="/catalog">
+                <img th:src="@{/images/logo/logo.png}" alt="Webby Sky Market Logo" width="40" height="40" class="me-2" />
+                <span>Webby Sky Market</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/catalog">Catalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/catalog/new-product">New Product</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            <i class="bi bi-cart3"></i>
+                            Cart
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div th:fragment="footer" class="bg-light text-center py-3">
+    <p>&copy; 2025 WebbySkyMarket. All rights reserved.</p>
+</div>
+
+

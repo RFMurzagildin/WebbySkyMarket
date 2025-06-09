@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/profile.css">
+
+    <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <link rel="manifest" href="/images/logo/site.webmanifest" />
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+<header th:replace="~{fragment/fragments :: header}"></header>
+
+<main class="flex-grow-1 d-flex p-4">
+    <div class="card shadow me-4" style="width: 300px; min-width: 300px;">
+        <div class="card-body text-center">
+
+            <div class="mb-4">
+                <img th:src="${user.gender == 'MALE' ? '/images/default-avatar-man.png' : '/images/default-avatar-woman.png'}"
+                     alt="User Avatar"
+                     class="rounded-circle border border-3 border-primary avatar-hover"
+                     style="width: 150px; height: 150px; object-fit: cover;">
+            </div>
+
+            <div class="mt-4">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>UserID:</strong>
+                        <span th:text="${user.id != null ? user.id : 'Not specified'}"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Username:</strong>
+                        <span th:text="${user.username != null ? user.username : 'Not specified'}"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Name:</strong>
+                        <span th:text="${user.name != null ? user.name : 'Not specified'}"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Surname:</strong>
+                        <span th:text="${user.surname != null ? user.surname : 'Not specified'}"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Gender:</strong>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:src="${user.gender == 'MALE' ? '/images/male-icon.png' : '/images/female-icon.png'}"
+                                 alt="Gender Icon"
+                                 style="width: 20px; height: 20px;"
+                                 th:if="${user.gender != null}">
+                            <span th:text="${user.gender != null ? (user.gender == 'MALE' ? 'Male' : 'Female') : 'Not specified'}"></span>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>PhoneNumber:</strong>
+                        <span th:text="${user.phoneNumber != null ? '+' + user.phoneNumber : 'Not specified'}"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Email:</strong>
+                        <span th:text="${user.email != null ? user.email : 'Not specified'}"></span>
+                    </li>
+                </ul>
+
+                <div class="text-center mt-3">
+                    <div th:if="${user.id == currentUser.id}">
+                        <a href="/users/profile/edit" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                            Edit Profile
+                        </a>
+                    </div>
+
+
+                    <div th:if="${user.role.name() == 'ADMIN'}" class="mt-2">
+                        <a href="/admin" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16">
+                                <path d="M5.338 1.022a.5.5 0 0 0-.676.094l-1.5 3a.5.5 0 0 0 .276.445l.5 1.5a.5.5 0 0 0 .445.276h1.5a.5.5 0 0 0 .445-.276l.5-1.5a.5.5 0 0 0 .276-.445l-1.5-3a.5.5 0 0 0-.094-.676zM5 1.25a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1-.75-.75v-1.5z"/>
+                                <path d="M8 1a6 6 0 1 0 0 12A6 6 0 0 0 8 1zm0 11a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                            </svg>
+                            Admin Panel
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow flex-grow-1">
+        <div class="card-body">
+
+            <div class="button-group mb-4">
+                <button id="reviewsButton" class="btn btn-primary">Reviews</button>
+                <button id="salesButton" class="btn btn-outline-primary">Sales</button>
+                <button id="purchasesButton" class="btn btn-outline-primary">Purchases</button>
+                <button id="activeItemsButton" class="btn btn-outline-primary">Active Items</button>
+            </div>
+
+            <div id="reviewsBlock" class="scrollable-block">
+
+            </div>
+
+            <div id="salesBlock" class="d-none scrollable-block">
+
+            </div>
+
+            <div id="purchasesBlock" class="d-none scrollable-block">
+
+            </div>
+
+            <div id="activeItemsBlock" class="scrollable-block d-none">
+                <div th:if="${#lists.isEmpty(activeProducts)}" class="text-center text-muted">
+                    Empty
+                </div>
+                <div th:unless="${#lists.isEmpty(activeProducts)}">
+                    <div class="row g-4">
+                        <div th:each="product : ${activeProducts}" class="col-md-4">
+                            <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="card-link text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img th:if="${product.imagePath1 != null}"
+                                         th:src="@{${product.imagePath1}}"
+                                         class="card-img-top product-image"
+                                         alt="Product Image">
+
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title text-truncate" th:text="${product.name}"></h5>
+
+                                        <p class="card-text product-description text-muted" th:text="${product.description}"></p>
+
+                                        <p class="card-text mt-auto text-success fw-bold">
+                                            <span th:text="'$' + ${product.price}"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragment/fragments :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/profile.js"></script>
+</body>
+</html>
