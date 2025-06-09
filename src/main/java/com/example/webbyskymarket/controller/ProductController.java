@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,33 +50,33 @@ public class ProductController {
 
     @GetMapping("/new-product")
     public String newProductPage(Model model){
-        model.addAttribute("newProductDto", new NewProductDTO());
+        model.addAttribute("newProductDTO", new NewProductDTO());
         return "product/new-product";
     }
 
     @PostMapping("/new-product")
     public String addNewProduct(
-            @RequestParam String name,
-            @RequestParam String description,
-            @RequestParam BigDecimal price,
-            @RequestParam("image1") MultipartFile image1,
-            @RequestParam("image2") MultipartFile image2,
-            @RequestParam("image3") MultipartFile image3,
-            @RequestParam String category,
-            @RequestParam String condition,
-            @CurrentSecurityContext(expression = "authentication?.name") String username
+            @ModelAttribute NewProductDTO newProductDTO,
+            BindingResult bindingResult,
+            @CurrentSecurityContext(expression = "authentication?.name") String username,
+            Model model
     ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", "Please correct the errors below.");
+            return "product/new-product";
+        }
+
         User currentUser = userService.findByUsername(username);
 
         Product product = Product.builder()
-                .name(name)
-                .description(description)
-                .price(price)
-                .imagePath1(imageUpload(image1))
-                .imagePath2(imageUpload(image2))
-                .imagePath3(imageUpload(image3))
-                .category(ProductCategory.valueOf(category))
-                .condition(ProductCondition.valueOf(condition))
+                .name(newProductDTO.getName())
+                .description(newProductDTO.getDescription())
+                .price(newProductDTO.getPrice())
+                .imagePath1(imageUpload(newProductDTO.getImage1()))
+                .imagePath2(imageUpload(newProductDTO.getImage2()))
+                .imagePath3(imageUpload(newProductDTO.getImage3()))
+                .category(newProductDTO.getCategory())
+                .condition(newProductDTO.getCondition())
                 .user(currentUser)
                 .status(ProductStatus.ACTIVE)
                 .build();
@@ -105,15 +106,16 @@ public class ProductController {
             Authentication authentication
     ) {
         Product product = productService.getProductById(id);
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            return "redirect:/catalog?error=unavailable";
+        }
         model.addAttribute("product", product);
         model.addAttribute("authentication", authentication);
-        
         if (username != null) {
             User user = userService.findByUsername(username);
             Cart cart = cartService.getOrCreateCart(user);
             model.addAttribute("cart", cart);
         }
-        
         model.addAttribute("reviews", reviewService.getProductReviews(id));
         model.addAttribute("reviewDTO", new ReviewDTO());
         return "product/product-card";
@@ -137,5 +139,25 @@ public class ProductController {
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);
         return "product/search";
+    }
+
+    @PostMapping("/product/{id}/deactivate")
+    public String deactivateProduct(@PathVariable Long id, @CurrentSecurityContext(expression = "authentication?.name") String username) {
+        Product product = productService.getProductById(id);
+        if (product.getUser().getUsername().equals(username)) {
+            product.setStatus(ProductStatus.INACTIVE);
+            productService.saveProduct(product);
+        }
+        return "redirect:/users/profile";
+    }
+
+    @PostMapping("/product/{id}/sold")
+    public String markProductAsSold(@PathVariable Long id, @CurrentSecurityContext(expression = "authentication?.name") String username) {
+        Product product = productService.getProductById(id);
+        if (product.getUser().getUsername().equals(username)) {
+            product.setStatus(ProductStatus.SOLD);
+            productService.saveProduct(product);
+        }
+        return "redirect:/users/profile";
     }
 }

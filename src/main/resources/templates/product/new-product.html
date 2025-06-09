@@ -133,7 +133,7 @@
             <i class="bi bi-plus-circle me-2"></i> Add New Product
         </h2>
 
-        <form action="/catalog/new-product" method="post" enctype="multipart/form-data">
+        <form action="/catalog/new-product" method="post" enctype="multipart/form-data" th:object="${newProductDTO}">
             <div class="row">
                 <div class="col-md-6">
                     <!-- Product Name -->
@@ -141,8 +141,9 @@
                         <label for="name" class="form-label">
                             <i class="bi bi-tag form-label-icon"></i>Product Name
                         </label>
-                        <input type="text" class="form-control" id="name" name="name" required
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required
                                placeholder="Enter product name">
+                        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                     </div>
 
                     <!-- Price -->
@@ -150,8 +151,9 @@
                         <label for="price" class="form-label">
                             <i class="bi bi-currency-dollar form-label-icon"></i>Price
                         </label>
-                        <input type="number" class="form-control" id="price" name="price" required
+                        <input type="number" class="form-control" id="price" th:field="*{price}" required
                                placeholder="Enter price" step="0.01" min="0">
+                        <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
                     </div>
 
                     <!-- Category -->
@@ -159,36 +161,27 @@
                         <label for="category" class="form-label">
                             <i class="bi bi-list-ul form-label-icon"></i>Category
                         </label>
-                        <select class="form-select" id="category" name="category" required>
+                        <select class="form-select" id="category" th:field="*{category}" required>
                             <option value="" disabled selected>Select a category</option>
-                            <option value="ANIMALS">Animals</option>
-                            <option value="REAL_ESTATE">Real Estate</option>
-                            <option value="TRANSPORT">Transport</option>
-                            <option value="ELECTRONICS">Electronics</option>
-                            <option value="FURNITURE">Furniture</option>
-                            <option value="CLOTHING">Clothing</option>
-                            <option value="SPORTS">Sports</option>
-                            <option value="BEAUTY_AND_HEALTH">Beauty and Health</option>
-                            <option value="FOOD">Food</option>
-                            <option value="BOOKS">Books</option>
-                            <option value="TOOLS">Tools</option>
+                            <option th:each="cat : ${T(com.example.webbyskymarket.enams.ProductCategory).values()}"
+                                    th:value="${cat}"
+                                    th:text="${cat.category}">Category</option>
                         </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
                     </div>
 
                     <!-- Condition -->
                     <div class="mb-3 input-wrapper">
-                        <label class="form-label">
+                        <label for="condition" class="form-label">
                             <i class="bi bi-check2-circle form-label-icon"></i>Condition
                         </label>
-                        <div class="d-flex gap-2">
-                            <div class="condition-badge active" data-value="NEW">
-                                <i class="bi bi-star-fill me-1"></i>New
-                            </div>
-                            <div class="condition-badge" data-value="USED">
-                                <i class="bi bi-star-half me-1"></i>Used
-                            </div>
-                        </div>
-                        <input type="hidden" name="condition" id="condition" value="NEW" required>
+                        <select class="form-select" id="condition" th:field="*{condition}" required>
+                            <option value="" disabled selected>Select condition</option>
+                            <option th:each="cond : ${T(com.example.webbyskymarket.enams.ProductCondition).values()}"
+                                    th:value="${cond}"
+                                    th:text="${cond}">Condition</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('condition')}" th:errors="*{condition}"></div>
                     </div>
                 </div>
 
@@ -198,8 +191,9 @@
                         <label for="description" class="form-label">
                             <i class="bi bi-card-text form-label-icon"></i>Description
                         </label>
-                        <textarea class="form-control" id="description" name="description" rows="4" required
+                        <textarea class="form-control" id="description" th:field="*{description}" rows="4" required
                                   placeholder="Enter product description"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
                     </div>
 
                     <!-- Address -->
@@ -212,49 +206,30 @@
                     </div>
 
                     <!-- Images -->
-                    <div class="mb-3 input-wrapper">
+                    <div class="mb-3">
                         <label class="form-label">
-                            <i class="bi bi-image form-label-icon"></i>Product Images
+                            <i class="bi bi-images form-label-icon"></i>Product Images
                         </label>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview1">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Main Image</p>
-                                    </div>
-                                </div>
-                                <input type="file" class="form-control" name="image1" accept="image/*" required
-                                       onchange="previewImage(this, 'preview1')">
-                            </div>
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview2">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Image 2</p>
-                                    </div>
-                                </div>
-                                <input type="file" class="form-control" name="image2" accept="image/*"
-                                       onchange="previewImage(this, 'preview2')">
-                            </div>
-                            <div class="col-md-4">
-                                <div class="image-preview" id="preview3">
-                                    <div class="image-preview-placeholder">
-                                        <i class="bi bi-image"></i>
-                                        <p>Image 3</p>
-                                    </div>
-                                </div>
-                                <input type="file" class="form-control" name="image3" accept="image/*"
-                                       onchange="previewImage(this, 'preview3')">
-                            </div>
+                        <div class="mb-2">
+                            <label for="image1" class="form-label">Main Image (Required)</label>
+                            <input type="file" class="form-control" id="image1" name="image1" accept="image/*" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('image1')}" th:errors="*{image1}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="image2" class="form-label">Additional Image 1 (Optional)</label>
+                            <input type="file" class="form-control" id="image2" name="image2" accept="image/*">
+                        </div>
+                        <div class="mb-2">
+                            <label for="image3" class="form-label">Additional Image 2 (Optional)</label>
+                            <input type="file" class="form-control" id="image3" name="image3" accept="image/*">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary btn-submit">
-                    <i class="bi bi-plus-circle me-2"></i>Add Product
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Add Product
                 </button>
             </div>
         </form>

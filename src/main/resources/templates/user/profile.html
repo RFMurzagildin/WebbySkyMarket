@@ -101,7 +101,6 @@
             <div class="button-group mb-4">
                 <button id="reviewsButton" class="btn btn-primary">Reviews</button>
                 <button id="salesButton" class="btn btn-outline-primary">Sales</button>
-                <button id="purchasesButton" class="btn btn-outline-primary">Purchases</button>
                 <button id="activeItemsButton" class="btn btn-outline-primary">Active Items</button>
             </div>
 
@@ -110,11 +109,28 @@
             </div>
 
             <div id="salesBlock" class="d-none scrollable-block">
-
-            </div>
-
-            <div id="purchasesBlock" class="d-none scrollable-block">
-
+                <div th:if="${#lists.isEmpty(salesProducts)}" class="text-center text-muted">
+                    Empty
+                </div>
+                <div th:unless="${#lists.isEmpty(salesProducts)}">
+                    <div class="row g-4">
+                        <div th:each="product : ${salesProducts}" class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img th:if="${product.imagePath1 != null}"
+                                     th:src="@{${product.imagePath1}}"
+                                     class="card-img-top product-image"
+                                     alt="Product Image">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title text-truncate" th:text="${product.name}"></h5>
+                                    <p class="card-text product-description text-muted" th:text="${product.description}"></p>
+                                    <p class="card-text mt-auto text-success fw-bold">
+                                        <span th:text="'$' + ${product.price}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="activeItemsBlock" class="scrollable-block d-none">
@@ -130,15 +146,20 @@
                                          th:src="@{${product.imagePath1}}"
                                          class="card-img-top product-image"
                                          alt="Product Image">
-
                                     <div class="card-body d-flex flex-column">
                                         <h5 class="card-title text-truncate" th:text="${product.name}"></h5>
-
                                         <p class="card-text product-description text-muted" th:text="${product.description}"></p>
-
                                         <p class="card-text mt-auto text-success fw-bold">
                                             <span th:text="'$' + ${product.price}"></span>
                                         </p>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <form th:action="@{/catalog/product/{id}/deactivate(id=${product.id})}" method="post">
+                                                <button type="submit" class="btn btn-warning btn-sm">Снять с публикации</button>
+                                            </form>
+                                            <form th:action="@{/catalog/product/{id}/sold(id=${product.id})}" method="post">
+                                                <button type="submit" class="btn btn-success btn-sm">Продано</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </a>

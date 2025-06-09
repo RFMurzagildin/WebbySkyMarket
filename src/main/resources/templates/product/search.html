@@ -1,11 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Catalog</title>
+    <title>Search Results</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/search.css">
+    <style>
+        .product-card {
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            box-shadow: 0 1rem 2rem rgba(52, 152, 219, 0.15);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .product-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #ecf0f1;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .meta-item i {
+            color: #3498db;
+        }
+        .cart-button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .cart-button:hover {
+            transform: scale(1.1);
+        }
+        .cart-button.text-success {
+            color: #198754 !important;
+        }
+        .cart-button.text-muted {
+            color: #95a5a6 !important;
+        }
+        .search-container {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .category-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .category-button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
 
     <link rel="icon" type="image/png" href="/images/logo/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/images/logo/favicon.svg" />
@@ -14,82 +117,101 @@
     <meta name="apple-mobile-web-app-title" content="MyWebSite" />
     <link rel="manifest" href="/images/logo/site.webmanifest" />
 </head>
-<body>
-<header th:replace="~{fragment/fragments :: header}"></header>
-<div class="container mt-4">
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-6 d-flex">
-            <div class="dropdown me-2">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    All Categories
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
-                    <li><a class="dropdown-item" href="/catalog/search?category=animals">Animals</a></li>
-                    <li><a class="dropdown-item" href="/catalog/search?category=real estate">Real Estate</a></li>
-                    <li><a class="dropdown-item" href="/catalog/search?category=transport">Transport</a></li>
-                    <li><a class="dropdown-item" href="/catalog/search?category=electronics">Electronics</a></li>
-                    <li><a class="dropdown-item" href="/catalog/search?category=furniture">Furniture</a></li>
-                </ul>
-            </div>
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <header th:replace="~{fragment/fragments :: header}"></header>
 
-            <form action="/catalog/search" method="get" class="input-group flex-grow-1">
-                <input type="text" name="category" class="form-control" placeholder="Enter product name..." aria-label="Search">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
-        </div>
-    </div>
-
-    <h1 class="text mb-4">Products</h1>
-    <div class="row">
-        <div th:each="product : ${products}" class="col-md-4 mb-4">
-            <div class="card h-100 position-relative">
-                <button class="btn btn-link position-absolute top-0 end-0 p-2 cart-button"
-                        th:data-product-id="${product.id}"
-                        th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'">
-                    <i class="bi bi-cart-plus-fill fs-4"></i>
-                </button>
-                <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="card-link">
-                    <img th:if="${product.imagePath1 != null}"
-                         th:src="@{${product.imagePath1}}"
-                         class="card-img-top"
-                         alt="Product Image"
-                         style="height: 200px; object-fit: cover;">
-
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${product.name}"></h5>
-                        <p class="card-text product-description" th:text="${product.description}"></p>
-                        <p class="card-text"><strong>Price:</strong> $<span th:text="${product.price}"></span></p>
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-container">
+                <div class="row">
+                    <div class="col-md-8 mx-auto">
+                        <form action="/catalog/search_by_product_name" method="get" class="d-flex gap-2">
+                            <input type="text" name="query" class="form-control" placeholder="Search products..." required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </form>
+                        
+                        <div class="category-buttons">
+                            <a th:each="category : ${T(com.example.webbyskymarket.enams.ProductCategory).values()}"
+                               th:href="@{/catalog/search_by_category(category=${category})}"
+                               class="category-button">
+                                <i class="bi bi-tag"></i>
+                                <span th:text="${category.category}">Category</span>
+                            </a>
+                        </div>
                     </div>
-                </a>
+                </div>
+            </div>
+
+            <h1 class="text mb-4">Products</h1>
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-3" th:each="product : ${products}">
+                    <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="text-decoration-none">
+                        <div class="card product-card">
+                            <div class="position-relative">
+                                <img th:if="${product.imagePath1 != null}"
+                                     th:src="@{${product.imagePath1}}"
+                                     th:alt="${product.name}"
+                                     class="product-image">
+                                <span class="category-badge" th:text="${product.category}">Category</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="product-title text-dark">
+                                    <span th:text="${product.name}">Product Name</span>
+                                </h5>
+                                <p class="product-description" th:text="${product.description}">Product description</p>
+                                <div class="product-meta">
+                                    <div class="d-flex align-items-center">
+                                        <div class="meta-item">
+                                            <i class="bi bi-tag"></i>
+                                            <span th:text="${product.category}">Category</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="product-price" th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                                        <button type="button"
+                                                class="cart-button"
+                                                th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'"
+                                                th:data-product-id="${product.id}"
+                                                onclick="event.preventDefault(); event.stopPropagation();">
+                                            <i class="bi bi-cart-plus-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </main>
 
-<footer th:replace="~{fragment/fragments :: footer}"></footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.cart-button').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productId = this.dataset.productId;
-            const isInCart = this.classList.contains('text-success');
-            
-            fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    this.classList.toggle('text-success');
-                    this.classList.toggle('text-muted');
-                }
+    <footer th:replace="~{fragment/fragments :: footer}"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.cart-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.dataset.productId;
+                const isInCart = this.classList.contains('text-success');
+                
+                fetch(`/cart/${isInCart ? 'remove' : 'add'}/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        this.classList.toggle('text-success');
+                        this.classList.toggle('text-muted');
+                    }
+                });
             });
         });
     });
-});
-</script>
+    </script>
 </body>
 </html>

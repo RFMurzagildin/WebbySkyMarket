@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.webbyskymarket.enams.ProductStatus;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,8 +39,10 @@ public class UserController {
     @GetMapping("/profile")
     public String profilePage(Authentication authentication, Model model) {
         User currentUser = userService.findByUsername(authentication.getName());
-        List<Product> activeProducts = productService.getProductsByUsername(currentUser.getUsername());
+        List<Product> activeProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.ACTIVE);
+        List<Product> salesProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.SOLD);
         model.addAttribute("activeProducts", activeProducts);
+        model.addAttribute("salesProducts", salesProducts);
         model.addAttribute("user", currentUser);
         model.addAttribute("currentUser", currentUser);
         return "user/profile";

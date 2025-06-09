@@ -1,6 +1,7 @@
 package com.example.webbyskymarket.service;
 
 import com.example.webbyskymarket.enams.ProductCategory;
+import com.example.webbyskymarket.enams.ProductStatus;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,9 @@ public class ProductService {
     public List<Product> getProductsByCategory(String categoryName){
         ProductCategory category = ProductCategory.valueOf(categoryName.toUpperCase().replace(" ", "_"));
         return productRepository.findByCategory(category);
+    }
+
+    public List<Product> getProductsByUsernameAndStatus(String username, ProductStatus productStatus){
+        return productRepository.getProductsByUsernameAndStatus(username, productStatus);
     }
 }
