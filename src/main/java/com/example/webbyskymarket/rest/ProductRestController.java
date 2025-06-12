@@ -1,6 +1,7 @@
 package com.example.webbyskymarket.rest;
 
 import com.example.webbyskymarket.dto.NewProductDTO;
+import com.example.webbyskymarket.enams.ProductStatus;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.service.ProductService;
 import com.example.webbyskymarket.service.UserService;
@@ -22,7 +23,6 @@ import java.util.List;
 public class ProductRestController {
 
     private final ProductService productService;
-    private final UserService userService;
 
     @GetMapping
     @Operation(summary = "Получить все активные продукты")
@@ -84,5 +84,11 @@ public class ProductRestController {
     public ResponseEntity<List<Product>> getProductsByUser(
             @Parameter(description = "Имя пользователя") @PathVariable String username) {
         return ResponseEntity.ok(productService.getActiveProductsByUsername(username));
+    }
+
+    @GetMapping("/popular")
+    @Operation(summary = "Получить популярные продукты (с количеством отзывов выше среднего)")
+    public ResponseEntity<List<Product>> getPopularProducts() {
+        return ResponseEntity.ok(productService.getProductsWithAboveAverageReviews());
     }
 } 

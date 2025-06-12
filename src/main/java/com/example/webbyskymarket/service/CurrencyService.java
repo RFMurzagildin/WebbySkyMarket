@@ -21,14 +21,10 @@ public class CurrencyService {
 
     @Scheduled(fixedRate = 60 * 60 * 1000)
     public void updateRates() {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            Map response = restTemplate.getForObject(API_URL, Map.class);
-            Map<String, Object> rates = (Map<String, Object>) response.get("conversion_rates");
-            usdToRub = new BigDecimal(rates.get("RUB").toString());
-            lastUpdate = System.currentTimeMillis();
-        } catch (Exception e) {
-            // логировать ошибку, но не падать
-        }
+        RestTemplate restTemplate = new RestTemplate();
+        Map response = restTemplate.getForObject(API_URL, Map.class);
+        Map<String, Object> rates = (Map<String, Object>) response.get("conversion_rates");
+        usdToRub = new BigDecimal(rates.get("RUB").toString());
+        lastUpdate = System.currentTimeMillis();
     }
 } 

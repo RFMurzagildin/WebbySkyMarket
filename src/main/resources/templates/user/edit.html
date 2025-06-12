@@ -47,58 +47,47 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Account Details</h5>
-                        <form action="/profile/edit" method="post">
-
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" th:value="${user.username}" required>
-                            </div>
-
+                        
+                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+                        
+                        <form action="/users/profile/edit" method="post" th:object="${profileEditDTO}">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}" th:value="${user.name}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="surname" class="form-label">Surname</label>
-                                    <input type="text" class="form-control" id="surname" name="surname" th:value="${user.surname}" required>
+                                    <input type="text" class="form-control" id="surname" th:field="*{surname}" th:value="${user.surname}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" required>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" th:value="${user.email}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:value="${user.phoneNumber}" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number">
+                                <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" th:value="${user.phoneNumber}" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number">
                                 <small class="form-text text-muted">Format: 1234567890</small>
+                                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Gender</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="male" value="MALE" th:checked="${user.gender == 'MALE'}">
+                                    <input class="form-check-input" type="radio" th:field="*{gender}" id="male" value="MALE">
                                     <label class="form-check-label" for="male">Male</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="gender" id="female" value="FEMALE" th:checked="${user.gender == 'FEMALE'}">
+                                    <input class="form-check-input" type="radio" th:field="*{gender}" id="female" value="FEMALE">
                                     <label class="form-check-label" for="female">Female</label>
                                 </div>
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
-                                <small class="form-text text-muted">Enter a new password to change it</small>
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                <div class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
                             </div>
 
                             <!-- Кнопка сохранения -->

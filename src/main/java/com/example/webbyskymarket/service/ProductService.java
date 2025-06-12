@@ -32,9 +32,6 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public List<Product> getProductsByUsername(String username) {
-        return productRepository.findByUserUsername(username);
-    }
 
     public List<Product> getProductsByName(String productName){
         return productRepository.findByNameContainingIgnoreCase(productName);
@@ -105,5 +102,9 @@ public class ProductService {
 
     public Page<Product> findByStatus(ProductStatus status, Pageable pageable) {
         return productRepository.findByStatus(status, pageable);
+    }
+
+    public List<Product> getProductsWithAboveAverageReviews() {
+        return productRepository.findProductsWithAboveAverageReviews();
     }
 }

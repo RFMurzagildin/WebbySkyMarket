@@ -6,11 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const nameCounter = document.getElementById('nameCounter');
     const descriptionCounter = document.getElementById('descriptionCounter');
 
-    // Обновление счетчиков символов
     nameInput.addEventListener('input', updateCounter(nameInput, nameCounter, 64, 'nameError'));
     descriptionInput.addEventListener('input', updateCounter(descriptionInput, descriptionCounter, 2048, 'descriptionError'));
 
-    // Проверка перед отправкой формы
     form.addEventListener('submit', function (event) {
         let hasErrors = false;
 

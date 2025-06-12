@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Привязываем события ко всем существующим кнопкам при загрузке страницы
+
     document.querySelectorAll('[data-user-action]').forEach(button => {
         button.addEventListener('click', handleButtonClick);
     });
@@ -36,7 +36,7 @@ function handleButtonClick(event) {
             return response.text();
         })
         .then(data => {
-            updateUserUI(userRow, action, userId); // ← передаём userId
+            updateUserUI(userRow, action, userId);
         })
         .catch(error => {
             alert('Error performing action: ' + action + ' for user ' + userId + '\n' + error.message);
@@ -44,14 +44,12 @@ function handleButtonClick(event) {
         });
 }
 
-// Отключить/включить все кнопки у пользователя
 function disableUserButtons(userId, disabled) {
     document.querySelectorAll(`[data-user-id="${userId}"]`).forEach(btn => {
         btn.disabled = disabled;
     });
 }
 
-// Обновление UI на основе действия
 function updateUserUI(row, action, userId) {
     const statusCell = row.querySelector('td:nth-child(3)');
     const roleCell = row.querySelector('td:nth-child(4)');
@@ -77,26 +75,22 @@ function updateUserUI(row, action, userId) {
             break;
     }
 
-    // Обновляем статус
     statusCell.innerHTML = `
         <span class="badge bg-${newStatus === 'Active' ? 'success' : 'danger'}">${newStatus}</span>
     `;
 
-    // Обновляем роль
     roleCell.innerHTML = `
         <span class="badge bg-secondary">${newRole}</span>
     `;
 
-    // Обновляем кнопки действий
-    updateActionButtons(actionsCell, newStatus, newRole, userId); // ← передаём userId
+    updateActionButtons(actionsCell, newStatus, newRole, userId);
 
-    // Включаем обратно кнопки
     disableUserButtons(userId, false);
 }
 
-// Перерисовываем кнопки действий
+
 function updateActionButtons(cell, status, role, userId) {
-    cell.innerHTML = ''; // Очищаем старые кнопки
+    cell.innerHTML = '';
 
     let blockBtn = '';
     let adminBtn = '';
@@ -127,11 +121,9 @@ function updateActionButtons(cell, status, role, userId) {
 
     cell.innerHTML = blockBtn + adminBtn;
 
-    // Добавляем обработчики событий к новым кнопкам
     addEventListenersToButtons(cell);
 }
 
-// Функция для повторной привязки событий к кнопкам
 function addEventListenersToButtons(cell) {
     cell.querySelectorAll('[data-user-action]').forEach(button => {
         button.removeEventListener('click', handleButtonClick); // избегаем дублирования

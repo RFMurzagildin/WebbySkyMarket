@@ -15,7 +15,6 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByUserUsername(String username);
     List<Product> findByNameContainingIgnoreCase(String name);
     List<Product> findByCategory(ProductCategory category);
     @Query("SELECT p FROM Product p WHERE p.user.username = :username AND p.status = :status")
@@ -24,4 +23,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategoryAndStatusEquals(String category, ProductStatus status);
     List<Product> findByUserAndStatusEquals(User user, ProductStatus status);
     Page<Product> findByStatus(ProductStatus status, Pageable pageable);
+
+    @Query(value = "SELECT p.* FROM products p " +
+           "WHERE (SELECT COUNT(*) FROM review r WHERE r.product_id = p.id) >= " +
+           "(SELECT AVG(review_count) FROM " +
+           "(SELECT COUNT(*) as review_count FROM review GROUP BY product_id) as counts)",
+           nativeQuery = true)
+    List<Product> findProductsWithAboveAverageReviews();
 }

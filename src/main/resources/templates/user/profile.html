@@ -105,7 +105,7 @@
             </div>
 
             <div id="reviewsBlock" class="scrollable-block">
-                <!-- Форма для комментария -->
+
                 <div th:if="${user.id != currentUser.id}">
                     <form th:action="@{/users/profile/{id}/comment(id=${user.id})}" method="post" th:object="${newProfileComment}" class="mb-4">
                         <div class="mb-2">
@@ -124,7 +124,7 @@
                         <button type="submit" class="btn btn-primary">Оставить комментарий</button>
                     </form>
                 </div>
-                <!-- Список комментариев -->
+
                 <div th:if="${#lists.isEmpty(profileComments)}" class="text-muted">Нет комментариев</div>
                 <div th:each="comment : ${profileComments}" class="card mb-3">
                     <div class="card-body">

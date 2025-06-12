@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface SupportTicketRepository extends JpaRepository<SupportTicket, Long> {
     List<SupportTicket> findByUserOrderByCreatedAtDesc(User user);
-    List<SupportTicket> findAllByOrderByCreatedAtDesc();
     List<SupportTicket> findByStatus(TicketStatus status);
     List<SupportTicket> findBySubjectContainingIgnoreCaseOrUserUsernameContainingIgnoreCase(String subject, String username);
 } 

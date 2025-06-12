@@ -1,6 +1,7 @@
 package com.example.webbyskymarket.controller;
 
 import com.example.webbyskymarket.dto.ProfileCommentDTO;
+import com.example.webbyskymarket.dto.ProfileEditDTO;
 import com.example.webbyskymarket.enams.ProductStatus;
 import com.example.webbyskymarket.models.Product;
 import com.example.webbyskymarket.models.User;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,7 +36,7 @@ public class UserController {
 
     @GetMapping("/profile/{id}")
     public String userDetails(@PathVariable Long id, Model model, Authentication authentication,
-                             @CookieValue(value = "currency", defaultValue = "USD") String currency) {
+                              @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.getUserById(id);
         User currentUser = userService.findByUsername(authentication.getName());
         List<Product> activeProducts = productService.getProductsByUsernameAndStatus(user.getUsername(), ProductStatus.ACTIVE);
@@ -52,7 +54,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public String profilePage(Authentication authentication, Model model,
-                             @CookieValue(value = "currency", defaultValue = "USD") String currency) {
+                              @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User currentUser = userService.findByUsername(authentication.getName());
         List<Product> activeProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.ACTIVE);
         List<Product> salesProducts = productService.getProductsByUsernameAndStatus(currentUser.getUsername(), ProductStatus.SOLD);
@@ -70,8 +72,40 @@ public class UserController {
     @GetMapping("/profile/edit")
     public String editProfile(Authentication authentication, Model model) {
         User user = userService.findByUsername(authentication.getName());
+        ProfileEditDTO profileEditDTO = new ProfileEditDTO();
+        profileEditDTO.setName(user.getName());
+        profileEditDTO.setSurname(user.getSurname());
+        profileEditDTO.setEmail(user.getEmail());
+        profileEditDTO.setPhoneNumber(user.getPhoneNumber());
+        profileEditDTO.setGender(user.getGender());
+        
         model.addAttribute("user", user);
+        model.addAttribute("profileEditDTO", profileEditDTO);
         return "user/edit";
+    }
+
+    @PostMapping("/profile/edit")
+    public String updateProfile(
+            @Valid @ModelAttribute("profileEditDTO") ProfileEditDTO profileEditDTO,
+            BindingResult bindingResult,
+            Authentication authentication,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            User user = userService.findByUsername(authentication.getName());
+            model.addAttribute("user", user);
+            return "user/edit";
+        }
+
+        try {
+            userService.updateUserProfile(authentication.getName(), profileEditDTO);
+            return "redirect:/users/profile?success=true";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            User user = userService.findByUsername(authentication.getName());
+            model.addAttribute("user", user);
+            return "user/edit";
+        }
     }
 
     @PostMapping("/profile/upload-image")
@@ -81,6 +115,31 @@ public class UserController {
     ){
         userService.updateUserImage(authentication.getName(), imageUpload(image));
         return "user/edit";
+    }
+
+    @GetMapping("/search")
+    public String searchUsers(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long startId,
+            @RequestParam(required = false) Long endId,
+            Model model
+    ) {
+        List<User> searchResults = new ArrayList<>();
+        
+        if (query != null && !query.trim().isEmpty()) {
+            searchResults.addAll(userService.searchUsersByNameOrSurname(query));
+        }
+        
+        if (startId != null && endId != null) {
+            searchResults.addAll(userService.findActiveUsersInIdRange(startId, endId));
+        }
+        
+        model.addAttribute("users", searchResults);
+        model.addAttribute("searchQuery", query);
+        model.addAttribute("startId", startId);
+        model.addAttribute("endId", endId);
+        
+        return "user/search-results";
     }
 
     public String imageUpload(MultipartFile image){

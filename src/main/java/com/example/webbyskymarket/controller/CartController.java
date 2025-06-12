@@ -6,6 +6,7 @@ import com.example.webbyskymarket.models.User;
 import com.example.webbyskymarket.service.CartService;
 import com.example.webbyskymarket.service.CurrencyService;
 import com.example.webbyskymarket.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
@@ -16,17 +17,13 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Controller
 public class CartController {
 
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private CurrencyService currencyService;
-
-    @Autowired
-    private UserService userService;
+    private final CartService cartService;
+    private final CurrencyService currencyService;
+    private final UserService userService;
 
     @GetMapping("/cart")
     public String showCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model) {

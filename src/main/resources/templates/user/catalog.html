@@ -125,7 +125,7 @@
 
 <main class="flex-grow-1 py-4">
     <div class="container">
-        <!-- Search Section -->
+
         <div class="search-container">
             <div class="row">
                 <div class="col-md-8 mx-auto">
@@ -151,7 +151,6 @@
             </div>
         </div>
 
-        <!-- Products Grid -->
         <div class="row g-4">
             <div class="col-md-4 col-lg-3" th:each="product : ${products}">
                 <a th:href="@{/catalog/product/{id}(id=${product.id})}" class="text-decoration-none">

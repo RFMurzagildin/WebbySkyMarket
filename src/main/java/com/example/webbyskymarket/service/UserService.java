@@ -1,5 +1,6 @@
 package com.example.webbyskymarket.service;
 
+import com.example.webbyskymarket.dto.ProfileEditDTO;
 import com.example.webbyskymarket.enams.Gender;
 import com.example.webbyskymarket.enams.Role;
 import com.example.webbyskymarket.enams.UserStatus;
@@ -8,6 +9,7 @@ import com.example.webbyskymarket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,14 +52,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with this id doesn't exist"));
     }
 
-    public void deleteUser(String username){
-        userRepository.delete(findByUsername(username));
-    }
-
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
-    }
-
     public List<User> getAllUsersSortedByIdAsc() {
         return userRepository.findAllByOrderByIdAsc();
     }
@@ -78,5 +72,41 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public void updateUserProfile(String username, ProfileEditDTO profileEditDTO) {
+        User user = findByUsername(username);
+
+        if (!user.getEmail().equals(profileEditDTO.getEmail()) && 
+            userRepository.findByEmail(profileEditDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email is already taken");
+        }
+
+        if (profileEditDTO.getGender() == null) {
+            throw new RuntimeException("Gender cannot be null");
+        }
+
+        user.setName(profileEditDTO.getName());
+        user.setSurname(profileEditDTO.getSurname());
+        user.setEmail(profileEditDTO.getEmail());
+        user.setPhoneNumber(profileEditDTO.getPhoneNumber());
+        user.setGender(profileEditDTO.getGender());
+
+        userRepository.save(user);
+    }
+
+    public List<User> searchUsersByNameOrSurname(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return List.of();
+        }
+        return userRepository.findUsersByNameOrSurnameContainingIgnoreCase(searchTerm.trim());
+    }
+
+    public List<User> findActiveUsersInIdRange(Long startId, Long endId) {
+        if (startId == null || endId == null || startId > endId) {
+            return List.of();
+        }
+        return userRepository.findActiveUsersByIdRange(startId, endId);
     }
 }

@@ -31,14 +31,6 @@ public class SupportTicketService {
         return supportTicketRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
-    public List<SupportTicket> getAllTickets() {
-        return supportTicketRepository.findAllByOrderByCreatedAtDesc();
-    }
-
-    public SupportTicket getTicketById(Long id) {
-        return supportTicketRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
-    }
 
     public List<SupportTicket> findAll() {
         return supportTicketRepository.findAll();
