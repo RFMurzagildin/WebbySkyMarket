@@ -26,11 +26,14 @@ public class CartController {
     private final UserService userService;
 
     @GetMapping("/cart")
-    public String showCart(@CurrentSecurityContext(expression = "authentication?.name") String username, Model model) {
+    public String showCart(@CurrentSecurityContext(expression = "authentication?.name") String username, 
+                          Model model,
+                          @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);
         model.addAttribute("usdToRub", currencyService.getUsdToRub());
+        model.addAttribute("currency", currency);
         return "cart/cart";
     }
 

@@ -134,22 +134,34 @@ public class ProductController {
     }
 
     @GetMapping("/search_by_product_name")
-    public String searchProductsByName(@RequestParam String query, Model model, @CurrentSecurityContext(expression="authentication?.name") String username) {
+    public String searchProductsByName(
+            @RequestParam String query, 
+            Model model, 
+            @CurrentSecurityContext(expression="authentication?.name") String username,
+            @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         List<Product> products = productService.getProductsByName(query);
         model.addAttribute("products", products);
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "product/search";
     }
 
     @GetMapping("/search_by_category")
-    public String searchProductByCategory(@RequestParam String category, Model model, @CurrentSecurityContext(expression="authentication?.name") String username){
+    public String searchProductByCategory(
+            @RequestParam String category, 
+            Model model, 
+            @CurrentSecurityContext(expression="authentication?.name") String username,
+            @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         List<Product> products = productService.getProductsByCategory(category);
         model.addAttribute("products", products);
         User user = userService.findByUsername(username);
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);
+        model.addAttribute("currency", currency);
+        model.addAttribute("usdToRub", currencyService.getUsdToRub());
         return "product/search";
     }
 
