@@ -48,7 +48,7 @@ public class ProductController {
                              @CookieValue(value = "currency", defaultValue = "USD") String currency) {
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllActiveProducts();
         model.addAttribute("products", products);
         Cart cart = cartService.getOrCreateCart(user);
         model.addAttribute("cart", cart);

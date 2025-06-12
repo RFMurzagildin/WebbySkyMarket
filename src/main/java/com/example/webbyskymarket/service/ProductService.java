@@ -107,4 +107,8 @@ public class ProductService {
     public List<Product> getProductsWithAboveAverageReviews() {
         return productRepository.findProductsWithAboveAverageReviews();
     }
+
+    public List<Product> getAllActiveProducts() {
+        return productRepository.findRandomActiveProducts(20);
+    }
 }

@@ -30,4 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "(SELECT COUNT(*) as review_count FROM review GROUP BY product_id) as counts)",
            nativeQuery = true)
     List<Product> findProductsWithAboveAverageReviews();
+
+    @Query(value = "SELECT * FROM products WHERE status = 'ACTIVE' ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    List<Product> findRandomActiveProducts(int limit);
 }
