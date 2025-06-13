@@ -179,7 +179,7 @@
                                     <span class="product-price" th:if="${currency == 'RUB'}" th:text="|${#numbers.formatDecimal(product.price * usdToRub, 1, 2)} ₽|">0.00 ₽</span>
                                     <button type="button"
                                             class="cart-button"
-                                            th:classappend="${cart != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'"
+                                            th:classappend="${cart != null && cart.products != null && cart.products.?[id == __${product.id}__].size() > 0} ? 'text-success' : 'text-muted'"
                                             th:data-product-id="${product.id}"
                                             onclick="event.preventDefault(); event.stopPropagation();">
                                         <i class="bi bi-cart-plus-fill"></i>

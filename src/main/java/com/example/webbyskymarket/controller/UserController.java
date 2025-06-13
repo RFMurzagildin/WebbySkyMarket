@@ -108,15 +108,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/profile/upload-image")
-    public String uploadImage(
-            @RequestParam("image") MultipartFile image,
-            Authentication authentication
-    ){
-        userService.updateUserImage(authentication.getName(), imageUpload(image));
-        return "user/edit";
-    }
-
     @GetMapping("/search")
     public String searchUsers(
             @RequestParam(required = false) String query,
@@ -140,18 +131,6 @@ public class UserController {
         model.addAttribute("endId", endId);
         
         return "user/search-results";
-    }
-
-    public String imageUpload(MultipartFile image){
-        String imagePath = null;
-        if(!image.isEmpty()){
-            try {
-                imagePath = storageService.uploadFile(image);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return imagePath;
     }
 
     @PostMapping("/profile/{id}/comment")

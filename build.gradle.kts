@@ -24,6 +24,15 @@ repositories {
 }
 
 dependencies {
+	//Тестирование
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.mockito:mockito-core")
+	testImplementation("org.junit.jupiter:junit-jupiter")
+	testImplementation("io.projectreactor:reactor-test")
+	testImplementation("org.springframework.security:spring-security-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+
 	implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation("software.amazon.awssdk:url-connection-client:2.20.0")
@@ -45,3 +54,7 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+
+
+
